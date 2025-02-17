@@ -20,12 +20,12 @@ public class LeakyReLU extends ActivationFunction {
     }
 
     @Override
-    public float[] backward(float[] output, float[] error) {
-        float[] gradients = new float[output.length];
-        for (int i = 0; i < output.length; i++) {
-            gradients[i] = output[i] >= 0 ? error[i] : alpha * error[i];
+    public float[] backward(float[] dOutput, float[] input, float[] output, float learningRate) {
+        float[] dInput = new float[input.length];
+        for (int i = 0; i < input.length; i++) {
+            dInput[i] = input[i] > 0 ? dOutput[i] : alpha * dOutput[i];
         }
-        return gradients;
+        return dInput;
     }
 
 }

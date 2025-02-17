@@ -20,12 +20,13 @@ public class ELU extends ActivationFunction {
     }
 
     @Override
-    public float[] backward(float[] output, float[] error) {
-        float[] gradients = new float[output.length];
-        for (int i = 0; i < output.length; i++) {
-            gradients[i] = output[i] >= 0 ? error[i] : error[i] * (output[i] + alpha);
+    public float[] backward(float[] dOutput, float[] input, float[] output, float learningRate) {
+        float[] dInput = new float[input.length];
+        for (int i = 0; i < input.length; i++) {
+            float elu = (input[i] > 0) ? 1 : alpha * (float) Math.exp(input[i]);
+            dInput[i] = dOutput[i] * elu;
         }
-        return gradients;
+        return dInput;
     }
 
 }

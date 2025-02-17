@@ -35,6 +35,16 @@ public class Neuron implements Serializable {
         return sum;
     }
 
+    public float[] backward(float dOutput, float[] input, float learningRate) {
+        float[] dInput = new float[numInputs];
+        for (int i = 0; i < numInputs; i++) {
+            dInput[i] = weights[i] * dOutput;
+            weights[i] -= learningRate * dOutput * input[i];
+        }
+        bias -= learningRate * dOutput;
+        return dInput;
+    }
+
     public float getBias() {
         return bias;
     }

@@ -14,12 +14,12 @@ public class Tanh extends ActivationFunction {
     }
 
     @Override
-    public float[] backward(float[] output, float[] error) {
-        float[] gradients = new float[output.length];
-        for (int i = 0; i < output.length; i++) {
-            gradients[i] = error[i] * (1 - output[i] * output[i]);
+    public float[] backward(float[] dOutput, float[] input, float[] output, float learningRate) {
+        float[] dInput = new float[input.length];
+        for (int i = 0; i < input.length; i++) {
+            dInput[i] = dOutput[i] * (1 - output[i] * output[i]);
         }
-        return gradients;
+        return dInput;
     }
 
 }

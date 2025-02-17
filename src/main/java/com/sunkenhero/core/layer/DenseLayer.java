@@ -34,8 +34,15 @@ public class DenseLayer implements Layer {
     }
 
     @Override
-    public float[] backward(float[] output, float[] error) {
-        throw new UnsupportedOperationException("Unimplemented method 'backward'");
+    public float[] backward(float[] dOutput, float[] input, float[] output, float learningRate) {
+        float[] dInput = new float[numInputs];
+        for (int i = 0; i < numNeurons; i++) {
+            float[] neuronDInput = neurons[i].backward(dOutput[i], input, learningRate);
+            for (int j = 0; j < numInputs; j++) {
+                dInput[j] += neuronDInput[j];
+            }
+        }
+        return dInput;
     }
 
     public Neuron[] getNeurons() {

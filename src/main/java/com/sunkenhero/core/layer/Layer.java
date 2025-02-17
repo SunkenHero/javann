@@ -6,6 +6,6 @@ public interface Layer extends Serializable {
 
     public float[] forward(float[] input);
 
-    public float[] backward(float[] output, float[] error);
+    public float[] backward(float[] dOutput, float[] input, float[] output, float learningRate);
 
 }

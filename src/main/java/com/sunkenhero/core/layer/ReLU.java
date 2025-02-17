@@ -14,12 +14,12 @@ public class ReLU extends ActivationFunction {
     }
 
     @Override
-    public float[] backward(float[] output, float[] error) {
-        float[] gradient = new float[output.length];
-        for (int i = 0; i < output.length; i++) {
-            gradient[i] = output[i] > 0 ? error[i] : 0;
+    public float[] backward(float[] dOutput, float[] input, float[] output, float learningRate) {
+        float[] dInput = new float[input.length];
+        for (int i = 0; i < input.length; i++) {
+            dInput[i] = input[i] > 0 ? dOutput[i] : 0;
         }
-        return gradient;
+        return dInput;
     }
 
 }

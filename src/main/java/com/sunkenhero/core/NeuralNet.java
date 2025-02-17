@@ -9,10 +9,14 @@ public class NeuralNet implements Serializable {
 
     private static final long serialVersionUID = 506151823693114784L;
 
-    private final ArrayList<Layer> layers;
+    private final List<Layer> layers;
+    private final List<float[]> layerInputs;
+    private final List<float[]> layerOutputs;
 
     public NeuralNet() {
         layers = new ArrayList<>();
+        layerInputs = new ArrayList<>();
+        layerOutputs = new ArrayList<>();
     }
 
     public void addLayers(Layer... layer) {
@@ -20,11 +24,26 @@ public class NeuralNet implements Serializable {
     }
 
     public float[] predict(float[] input) {
-        float[] output = input;
+        layerInputs.clear();
+        layerOutputs.clear();
+        float[] currentInput = input;
         for (Layer layer : layers) {
-            output = layer.forward(output);
+            layerInputs.add(currentInput);
+            float[] output = layer.forward(currentInput);
+            layerOutputs.add(output);
+            currentInput = output;
         }
-        return output;
+        return currentInput;
+    }
+
+    public void backward(float[] dOutput, float learningRate) {
+        float[] currentDOutput = dOutput;
+        for (int i = layers.size() - 1; i >= 0; i--) {
+            Layer layer = layers.get(i);
+            float[] input = layerInputs.get(i);
+            float[] output = layerOutputs.get(i);
+            currentDOutput = layer.backward(currentDOutput, input, output, learningRate);
+        }
     }
 
     public void save(String filename) throws IOException {
