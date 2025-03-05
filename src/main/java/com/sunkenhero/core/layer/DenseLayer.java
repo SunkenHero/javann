@@ -10,8 +10,11 @@ public class DenseLayer implements Layer {
     private final int numNeurons;
 
     public DenseLayer(int numInputs, int numNeurons) {
+        if (numInputs <= 0) {
+            throw new IllegalArgumentException("Number of inputs must be greater than zero");
+        }
         if (numNeurons <= 0) {
-            throw new IllegalArgumentException("Number of neurons must be greater than zero.");
+            throw new IllegalArgumentException("Number of neurons must be greater than zero");
         }
         this.numInputs = numInputs;
         this.numNeurons = numNeurons;
@@ -24,7 +27,7 @@ public class DenseLayer implements Layer {
     @Override
     public float[] forward(float[] input) {
         if (input.length != numInputs) {
-            throw new IllegalArgumentException("Input size must match neuron input size.");
+            throw new IllegalArgumentException("Input size must match neuron input size");
         }
         float[] outputs = new float[numNeurons];
         for (int i = 0; i < numNeurons; i++) {
@@ -43,10 +46,6 @@ public class DenseLayer implements Layer {
             }
         }
         return dInput;
-    }
-
-    public Neuron[] getNeurons() {
-        return neurons;
     }
 
     @Override

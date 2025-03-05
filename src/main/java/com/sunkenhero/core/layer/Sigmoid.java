@@ -6,10 +6,11 @@ public class Sigmoid extends ActivationFunction {
 
     @Override
     public float[] forward(float[] input) {
+        float[] output = new float[input.length];
         for (int i = 0; i < input.length; i++) {
-            input[i] = 1 / (1 + (float) Math.exp(-input[i]));
+            output[i] = 1 / (1 + (float) Math.exp(-input[i]));
         }
-        return input;
+        return output;
     }
 
     @Override

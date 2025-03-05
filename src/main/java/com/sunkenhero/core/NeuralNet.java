@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import com.sunkenhero.core.layer.Layer;
+import com.sunkenhero.core.loss.Loss;
 
 public class NeuralNet implements Serializable {
 
@@ -29,9 +30,8 @@ public class NeuralNet implements Serializable {
         float[] currentInput = input;
         for (Layer layer : layers) {
             layerInputs.add(currentInput);
-            float[] output = layer.forward(currentInput);
-            layerOutputs.add(output);
-            currentInput = output;
+            currentInput = layer.forward(currentInput);
+            layerOutputs.add(currentInput);
         }
         return currentInput;
     }
@@ -46,10 +46,39 @@ public class NeuralNet implements Serializable {
         }
     }
 
-    public void save(String filename) throws IOException {
-        FileOutputStream fileOutputStream = new FileOutputStream(filename);
-        save(fileOutputStream);
-        fileOutputStream.close();
+    public void train(float[][] inputs, float[][] targets, Loss lossFunction, int epochs, float learningRate) {
+        train(inputs, targets, lossFunction, epochs, learningRate, inputs.length);
+    }
+
+    public void train(float[][] inputs, float[][] targets, Loss lossFunction, int epochs, float learningRate, int max) {
+        for (int epoch = 0; epoch < epochs; epoch++) {
+            for (int i = 0; i < Math.min(inputs.length, max); i++) {
+                backward(lossFunction.gradient(predict(inputs[i]), targets[i]), learningRate);
+            }
+        }
+    }
+
+    public float test(float[][] inputs, float[][] targets, Loss lossFunction) {
+        return test(inputs, targets, lossFunction, inputs.length);
+    }
+
+    public float test(float[][] inputs, float[][] targets, Loss lossFunction, int max) {
+        float loss = 0;
+        for (int i = 0; i < Math.min(inputs.length, max); i++) {
+            loss += lossFunction.loss(predict(inputs[i]), targets[i]);
+        }
+        return loss / Math.min(inputs.length, max);
+    }
+
+    public void save(String filename) {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(filename);
+            save(fileOutputStream);
+            fileOutputStream.close();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save " + filename);
+        }
+
     }
 
     public void save(OutputStream stream) throws IOException {
@@ -59,11 +88,15 @@ public class NeuralNet implements Serializable {
         objectOutputStream.close();
     }
 
-    public static NeuralNet load(String filename) throws IOException, ClassNotFoundException {
-        FileInputStream fileInputStream = new FileInputStream(filename);
-        NeuralNet net = load(fileInputStream);
-        fileInputStream.close();
-        return net;
+    public static NeuralNet load(String filename) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(filename);
+            NeuralNet net = load(fileInputStream);
+            fileInputStream.close();
+            return net;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load " + filename);
+        }
     }
 
     public static NeuralNet load(InputStream stream) throws IOException, ClassNotFoundException {
